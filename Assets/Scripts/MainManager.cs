@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,8 +20,7 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    
-    // Start is called before the first frame update
+    [SerializeField] private Text scoreName;
     void Start()
     {
         const float step = 0.6f;
@@ -36,6 +37,7 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        scoreName.text = $"Best Score : {DataManager.Instance.playerName} : {DataManager.Instance.playerScore}";
     }
 
     private void Update()
@@ -60,6 +62,7 @@ public class MainManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
+    
     }
 
     void AddPoint(int point)
@@ -70,6 +73,12 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (m_Points > DataManager.Instance.playerScore) { 
+        DataManager.Instance.playerScore = m_Points;
+        DataManager.Instance.playerName = DataManager.Instance.tempPlayerName;
+        scoreName.text = $"Best Score : {DataManager.Instance.playerName} : {DataManager.Instance.playerScore}";
+        DataManager.Instance.SaveData();
+        }
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
